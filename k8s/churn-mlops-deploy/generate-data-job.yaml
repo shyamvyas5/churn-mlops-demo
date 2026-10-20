@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mlops-generate-data
+  namespace: mlops
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: data-gen
+          image: churn-mlops:v1
+          imagePullPolicy: IfNotPresent
+          command: ["python", "src/data/generate_data.py", "--size", "1500"]
+          envFrom:
+            - configMapRef:
+                name: mlops-pipeline-config
+            - secretRef:
+                name: mlops-pipeline-secrets

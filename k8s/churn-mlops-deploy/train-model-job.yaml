@@ -1,0 +1,21 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mlops-train-model
+  namespace: mlops
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: trainer
+          image: churn-mlops:v1
+          imagePullPolicy: IfNotPresent
+          command: ["python", "src/models/train.py", "--batches", "3"]
+          envFrom:
+            - configMapRef:
+                name: mlops-pipeline-config
+            - secretRef:
+                name: mlops-pipeline-secrets

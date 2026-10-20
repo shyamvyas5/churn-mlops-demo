@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mlops-pipeline-config
+  namespace: mlops
+data:
+  APP_ENV: "production"
+  LOG_LEVEL: "INFO"
+  # In-cluster CoreDNS endpoints
+  MLFLOW_TRACKING_URI: "http://mlflow.mlops.svc.cluster.local:5000"
+  MLFLOW_EXPERIMENT_NAME: "churn-batch-scoring"
+  MLFLOW_MODEL_NAME: "churn_classifier"
+  S3_ENDPOINT_URL: "http://garage.mlops.svc.cluster.local:3900"
+  S3_BUCKET_NAME: "churn-mlops"
+  # S3 client compatibility settings
+  MLFLOW_S3_ENDPOINT_URL: "http://garage.mlops.svc.cluster.local:3900"
+  MLFLOW_S3_IGNORE_TLS: "true"
+  AWS_S3_FORCE_PATH_STYLE: "true"
+  AWS_DEFAULT_REGION: "garage"

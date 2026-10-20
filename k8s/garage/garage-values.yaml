@@ -1,0 +1,21 @@
+---
+garage:
+  singleNode: true
+  existingRpcSecret: "garage-secrets"
+
+persistence:
+  enabled: true
+  meta:
+    size: 1000Mi
+    hostPath: /var/lib/garage/meta
+  data:
+    size: 30000Mi
+    hostPath: /var/lib/garage/data
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 512Mi

@@ -1,0 +1,34 @@
+---
+fullnameOverride: postgresql   # service and pod become postgresql(-0)
+
+# global:
+#   security:
+#     allowInsecureImages: true         # required when overriding the image repository
+
+image:
+  repository: bitnamilegacy/postgresql
+  # tag: ""                           # leave unset to use the chart's default; see note below
+
+auth:
+  username: mlflow
+  database: mlflow
+  existingSecret: mlflow-postgres-credentials
+  secretKeys:
+    adminPasswordKey: postgres-password
+    userPasswordKey: password
+
+primary:
+  persistence:
+    enabled: true
+    size: 5Gi
+    # storageClass: local-path
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+metrics:
+  enabled: false

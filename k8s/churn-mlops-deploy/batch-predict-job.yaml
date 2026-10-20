@@ -1,0 +1,21 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mlops-batch-predict
+  namespace: mlops
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: predictor
+          image: churn-mlops:v1
+          imagePullPolicy: IfNotPresent
+          command: ["python", "src/models/predict.py"]
+          envFrom:
+            - configMapRef:
+                name: mlops-pipeline-config
+            - secretRef:
+                name: mlops-pipeline-secrets

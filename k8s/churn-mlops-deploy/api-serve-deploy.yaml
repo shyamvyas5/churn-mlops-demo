@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: churn-api-server
+  namespace: mlops
+  labels:
+    app: churn-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: churn-api
+  template:
+    metadata:
+      labels:
+        app: churn-api
+    spec:
+      containers:
+        - name: api
+          image: churn-mlops:v1
+          imagePullPolicy: IfNotPresent
+          command: ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: mlops-pipeline-config
+            - secretRef:
+                name: mlops-pipeline-secrets
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "250Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: churn-api-service
+  namespace: mlops
+  labels:
+    app: churn-api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: churn-api

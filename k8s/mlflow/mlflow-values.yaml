@@ -1,0 +1,42 @@
+---
+backendStore:
+  databaseConnectionCheck: true
+  postgres:
+    enabled: true                                   # was false, so Postgres was ignored
+    host: "postgresql.mlops.svc.cluster.local"   # matches fullnameOverride from the Postgres chart
+    port: 5432
+    database: "mlflow"
+    user: "mlflow"
+  # -- Specifies if you want to use an existing database secret.
+  existingDatabaseSecret:
+    # -- The name of the existing database secret.
+    name: "mlflow"
+    # -- The key of the username in the existing database secret.
+    usernameKey: "postgres-username"
+    # -- The key of the password in the existing database secret.
+    passwordKey: "postgres-password"
+
+artifactRoot:
+  proxiedArtifactStorage: true
+  s3:
+    enabled: true
+    bucket: "mlflow-artifacts"
+    path: ""
+    existingSecret:
+      # -- This is for setting up the AWS IAM user secrets existing secret name.
+      name: "mlflow"
+      # -- Key in the existing secret that holds the AWS_ACCESS_KEY_ID value.
+      keyOfAccessKeyId: "AWS_ACCESS_KEY_ID"
+      # -- Key in the existing secret that holds the AWS_SECRET_ACCESS_KEY value.
+      keyOfSecretAccessKey: "AWS_SECRET_ACCESS_KEY"
+
+extraEnvVars:
+  MLFLOW_S3_ENDPOINT_URL: "http://garage.mlops.svc.cluster.local:3900"
+  AWS_DEFAULT_REGION: "garage"
+  MLFLOW_SERVER_ALLOWED_HOSTS: "mlflow.mlops.svc.cluster.local:*,mlflow.mlops.svc.cluster.local,mlflow.mlops.svc,mlflow:*,mlflow,localhost:*"
+  MLFLOW_DISABLE_TELEMETRY: true
+  DO_NOT_TRACK: true
+
+service:
+  type: ClusterIP
+  port: 5000
